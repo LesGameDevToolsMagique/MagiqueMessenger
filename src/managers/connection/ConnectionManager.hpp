@@ -7,10 +7,10 @@
 
 #include    "../../interfaces/IConnection.h"
 
-#include    <netdb.h>       // getprotobyname
+#include    <netdb.h>       // getprotobyname - struct protoent
 #include    <arpa/inet.h>   // inet_addr
 
-class                           ConnectionManager: public IConnection
+class                                   ConnectionManager: public IConnection
 {
 /*  Functions   */
 public:
@@ -18,24 +18,25 @@ public:
     virtual ~ConnectionManager();
 
     /*  Getter / Setter         */
-    virtual int                 getSocketFd() const;
-    virtual const std::string   &getIpAddress() const;
-    virtual unsigned int        getPort() const;
+    virtual int                         getSocketFd() const;
+    virtual const std::string           &getIpAddress() const;
+    virtual unsigned int                getPort() const;
+    virtual const struct sockaddr_in    *getMySockaddr() const;
 
     /*  Connection management   */
-    virtual int                 connection(const int domain = AF_INET, const int type = SOCK_STREAM, const std::string &protocol = std::string());
-    virtual void                disconnection();
+    virtual int                         connection(const int domain = AF_INET, const int type = SOCK_STREAM, const std::string &protocol = std::string());
+    virtual void                        disconnection();
 
 protected:
     /*  Getter / Setter         */
-    int                         getProtocol(const std::string &protocol) const;
+    int                                 getProtocol(const std::string &protocol) const;
 
     /*  Socket management       */
-    virtual int                 createSocket(const int domain, const int type , const int protocol);
-    virtual void                destroySocket();
+    virtual int                         createSocket(const int domain, const int type , const int protocol);
+    virtual void                        destroySocket();
 
     /*  Configuration           */
-    virtual int                 sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET);
+    virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET);
 };
 
 

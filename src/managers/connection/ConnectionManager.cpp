@@ -9,7 +9,6 @@ ConnectionManager::ConnectionManager(const std::string &ip_address, const unsign
     this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
     this->ip_address = ip_address;
     this->port = port;
-    this->my_addr = new(struct sockaddr_in);
     // TODO: Object created message
 }
 
@@ -25,26 +24,31 @@ ConnectionManager::~ConnectionManager()
 
 /*  Public  */
 
-int                     ConnectionManager::getSocketFd() const
+int                         ConnectionManager::getSocketFd() const
 {
     return this->socket_fd;
 }
 
-const std::string       &ConnectionManager::getIpAddress() const
+const std::string           &ConnectionManager::getIpAddress() const
 {
     return this->ip_address;
 }
 
-unsigned int            ConnectionManager::getPort() const
+unsigned int                ConnectionManager::getPort() const
 {
     return this->port;
 }
 
+const struct sockaddr_in    *ConnectionManager::getMySockaddr() const
+{
+    return &this->my_addr;
+}
+
 /*  Protected   */
 
-int                     ConnectionManager::getProtocol(const std::string &protocol) const
+int                         ConnectionManager::getProtocol(const std::string &protocol) const
 {
-    struct protoent     *proto = nullptr;
+    struct protoent         *proto = nullptr;
 
     if (!protocol.empty()) {
         if ((proto = getprotobyname(protocol.c_str())) == nullptr) {
@@ -61,9 +65,9 @@ int                     ConnectionManager::getProtocol(const std::string &protoc
  *  Connection / Disconnection
  */
 
-int                     ConnectionManager::connection(const int domain, const int type, const std::string &protocol)
+int                         ConnectionManager::connection(const int domain, const int type, const std::string &protocol)
 {
-    int                 proto = this->getProtocol(protocol);
+    int                     proto = this->getProtocol(protocol);
 
     if (proto == -1) {
         return -1;
@@ -74,10 +78,12 @@ int                     ConnectionManager::connection(const int domain, const in
         return -1;
     }
 
-    this->sockaddrConfig(this->my_addr, domain);
-    // TODO: Sockaddr config
+    if (this->sockaddrConfig(&this->my_addr, domain) == -1) {
+        // TODO : Error message
+        return -1;
+    }
 
-    if (connect(this->socket_fd, ((struct sockaddr *) nullptr), sizeof(struct sockaddr)) == -1) {
+    if (connect(this->socket_fd, ((struct sockaddr *) this->getMySockaddr()), sizeof(struct sockaddr)) == -1) {
         // TODO: Error message
         return -1;
     }
@@ -87,7 +93,7 @@ int                     ConnectionManager::connection(const int domain, const in
     return 0;
 }
 
-void                    ConnectionManager::disconnection()
+void                        ConnectionManager::disconnection()
 {
     this->destroySocket();
     // TODO: Disconnected message
@@ -97,7 +103,7 @@ void                    ConnectionManager::disconnection()
  *  Socket management
  */
 
-int                     ConnectionManager::createSocket(const int domain, const int type, const int protocol)
+int                         ConnectionManager::createSocket(const int domain, const int type, const int protocol)
 {
     this->socket_fd = socket(domain, type, protocol);
 
@@ -111,7 +117,7 @@ int                     ConnectionManager::createSocket(const int domain, const 
     return 0;
 }
 
-void                    ConnectionManager::destroySocket()
+void                        ConnectionManager::destroySocket()
 {
     if (this->socket_fd != SOCKET_FD_DEFAULT_VALUE) {
         if (close(this->socket_fd) == -1) {
@@ -122,9 +128,9 @@ void                    ConnectionManager::destroySocket()
     }
 }
 
-int                     ConnectionManager::sockaddrConfig(struct sockaddr_in *sockaddr, const int domain)
+int                         ConnectionManager::sockaddrConfig(struct sockaddr_in *sockaddr, const int domain)
 {
-    unsigned int        in_addr = inet_addr(this->getIpAddress().c_str());
+    unsigned int            in_addr = inet_addr(this->getIpAddress().c_str());
 
     if (in_addr == 0) {
         return -1;
