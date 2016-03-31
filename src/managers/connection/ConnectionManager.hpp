@@ -14,7 +14,7 @@ class                                   ConnectionManager: public IConnection
 {
 /*  Functions   */
 public:
-    ConnectionManager(const std::string &ip_address, const unsigned int port = 4242);
+    ConnectionManager(const std::string &ip_address, const unsigned int port = 12321);
     virtual ~ConnectionManager();
 
     /*  Getter / Setter         */
