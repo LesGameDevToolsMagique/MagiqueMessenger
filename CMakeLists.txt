@@ -17,7 +17,8 @@ set(CONNECTION_MANAGER_ROOT ${MANAGER_ROOT}/connection)
 set(CONNECTION_MANAGER_FILES ${CONNECTION_MANAGER_ROOT}/ConnectionManager.cpp ${CONNECTION_MANAGER_ROOT}/ConnectionManager.hpp)
 
 # Messenger manager
-
+set(MESSENGER_MANAGER_ROOT ${MANAGER_ROOT}/messenger)
+set(MESSENGER_MANAGER_FILES ${MESSENGER_MANAGER_ROOT}/MessengerManager.cpp ${MESSENGER_MANAGER_ROOT}/MessengerManager.hpp)
 
 #
 # examples
@@ -32,5 +33,5 @@ set(SERVER_ROOT ${EXAMPLE_ROOT}/server)
 
 
 # Main
-set(SOURCE_FILES  ${INTERFACES_FILES} ${CONNECTION_MANAGER_FILES} main.cpp)
+set(SOURCE_FILES  ${INTERFACES_FILES} ${CONNECTION_MANAGER_FILES} ${MESSENGER_MANAGER_FILES} main.cpp)
 add_executable(MagiqueMessenger ${SOURCE_FILES})
