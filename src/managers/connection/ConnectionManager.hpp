@@ -5,7 +5,7 @@
 #ifndef     __CONNECTIONMANAGER_HPP__
 #define     __CONNECTIONMANAGER_HPP__
 
-#include    "../../interfaces/IConnection.h"
+#include    "../../interfaces/IConnection.hpp"
 
 #include    <netdb.h>       // getprotobyname - struct protoent
 #include    <arpa/inet.h>   // inet_addr

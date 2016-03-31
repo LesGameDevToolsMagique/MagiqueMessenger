@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Interfaces
 set(INTERFACES_ROOT src/interfaces)
-set(INTERFACES_FILES ${INTERFACES_ROOT}/IConnection.h ${INTERFACES_ROOT}/IMessenger.h)
+set(INTERFACES_FILES ${INTERFACES_ROOT}/IConnection.hpp ${INTERFACES_ROOT}/IMessenger.hpp ${INTERFACES_ROOT}/IClient.hpp)
 
 #
 # Managers

@@ -5,7 +5,7 @@
 #ifndef     __MESSENGERMANAGER_HPP__
 #define     __MESSENGERMANAGER_HPP__
 
-#include    "../../interfaces/IMessenger.h"
+#include    "../../interfaces/IMessenger.hpp"
 
 class MessengerManager : public IMessenger
 {

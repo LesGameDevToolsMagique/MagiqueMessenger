@@ -2,8 +2,8 @@
 // Created by Jean-Antoine Dupont on 14/03/2016.
 //
 
-#ifndef     __IMESSENGER_H__
-#define     __IMESSENGER_H__
+#ifndef     __IMESSENGER_HPP__
+#define     __IMESSENGER_HPP__
 
 #include    <sys/socket.h> // sockaddr
 
@@ -25,4 +25,4 @@ public:
                                     struct sockaddr *to = nullptr, socklen_t *to_size = nullptr) = 0;
 };
 
-#endif  /*  __IMESSENGER_H__    */
+#endif  /*  __IMESSENGER_HPP__  */

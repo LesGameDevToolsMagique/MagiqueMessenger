@@ -2,8 +2,8 @@
 // Created by Jean-Antoine Dupont on 14/03/2016.
 //
 
-#ifndef     __ICONNECTION_H__
-#define     __ICONNECTION_H__
+#ifndef     __ICONNECTION_HPP__
+#define     __ICONNECTION_HPP__
 
 #include    <string>        // std::string
 #include    <sys/socket.h>  // socket
@@ -43,4 +43,4 @@ protected:
     virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET) = 0;
 };
 
-#endif  /*  __ICONNECTION_H__   */
+#endif  /*  __ICONNECTION_HPP__ */
