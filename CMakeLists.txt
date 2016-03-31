@@ -21,17 +21,12 @@ set(MESSENGER_MANAGER_ROOT ${MANAGER_ROOT}/messenger)
 set(MESSENGER_MANAGER_FILES ${MESSENGER_MANAGER_ROOT}/MessengerManager.cpp ${MESSENGER_MANAGER_ROOT}/MessengerManager.hpp)
 
 #
-# examples
+# Client
 #
-set(EXAMPLE_ROOT examples)
-
-# Client example
-set(CLIENT_ROOT ${EXAMPLE_ROOT}/client)
-
-# Server example
-set(SERVER_ROOT ${EXAMPLE_ROOT}/server)
+set(CLIENT_ROOT src/client)
+set(CLIENT_FILES ${CLIENT_ROOT}/Client.cpp ${CLIENT_ROOT}/Client.hpp)
 
 
 # Main
-set(SOURCE_FILES  ${INTERFACES_FILES} ${CONNECTION_MANAGER_FILES} ${MESSENGER_MANAGER_FILES} main.cpp)
+set(SOURCE_FILES  ${INTERFACES_FILES} ${CONNECTION_MANAGER_FILES} ${MESSENGER_MANAGER_FILES} ${CLIENT_FILES} main.cpp)
 add_executable(MagiqueMessenger ${SOURCE_FILES})

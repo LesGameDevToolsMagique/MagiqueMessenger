@@ -1,27 +1,18 @@
 #include <iostream>
-#include    "src/managers/connection/ConnectionManager.hpp"
-#include    "src/managers/messenger/MessengerManager.hpp"
+#include "src/client/Client.hpp"
 
 int main()
 {
-    IConnection *connectionManager = new ConnectionManager("127.0.0.1", 12321);
-    IMessenger  *messengerManager = new MessengerManager();
+    IClient *client = new Client("127.0.0.1", 12321);
     std::string message = "Coucou toi\n";
 
-    if (connectionManager->connection(AF_INET, SOCK_STREAM, "TCP") != -1) {
-        std::cout << "Connected" << std::endl;
+    if (client->getConnectionManager()->connection(AF_INET, SOCK_STREAM, "TCP") != -1) {
 
-        if (messengerManager->sendMessage(connectionManager->getSocketFd(), message.c_str(), message.size()) == 0) {
-            std::cout << "Send" << std::endl;
-        } else {
-            std::cout << "Failed" << std::endl;
-        }
+        client->getMessengerManager()->sendMessage(client->getConnectionManager()->getSocketFd(), message.c_str(), message.size());
 
-        connectionManager->disconnection();
+        client->getConnectionManager()->disconnection();
     }
 
-    delete connectionManager;
-
-    std::cout << "Hello, World!" << std::endl;
+    delete client;
     return 0;
 }
