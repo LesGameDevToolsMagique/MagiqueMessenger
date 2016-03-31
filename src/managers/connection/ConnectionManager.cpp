@@ -9,7 +9,7 @@ ConnectionManager::ConnectionManager(const std::string &ip_address, const unsign
     this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
     this->ip_address = ip_address;
     this->port = port;
-    this->my_addr = new struct sockaddr_in;
+    this->my_addr = new(struct sockaddr_in);
     // TODO: Object created message
 }
 
