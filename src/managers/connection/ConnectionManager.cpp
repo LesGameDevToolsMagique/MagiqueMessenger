@@ -74,12 +74,10 @@ int                         ConnectionManager::connection(const int domain, cons
     }
 
     if (this->createSocket(domain, type, proto) == -1) {
-        // TODO: Error message
         return -1;
     }
 
     if (this->sockaddrConfig(&this->my_addr, domain) == -1) {
-        // TODO : Error message
         return -1;
     }
 
@@ -133,6 +131,7 @@ int                         ConnectionManager::sockaddrConfig(struct sockaddr_in
     unsigned int            in_addr = inet_addr(this->getIpAddress().c_str());
 
     if (in_addr == 0) {
+        // TODO: Error message
         return -1;
     }
 
