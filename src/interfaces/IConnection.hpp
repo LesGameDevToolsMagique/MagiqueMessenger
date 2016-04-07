@@ -35,7 +35,6 @@ public:
                                                    const std::string &protocol = std::string()) = 0;
     virtual void                        disconnection() = 0;
 
-protected:
     /*  Socket management       */
     virtual int                         createSocket(const int domain, const int type , const int protocol) = 0;
     virtual int                         destroySocket(int fd) = 0;
@@ -44,6 +43,7 @@ protected:
     virtual int                         listenSocket(const int max_listened = 256) = 0;
     virtual int                         acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size) = 0;
 
+protected:
     /*  Configuration           */
     virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET) = 0;
 };
