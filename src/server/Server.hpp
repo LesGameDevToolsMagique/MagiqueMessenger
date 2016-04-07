@@ -16,7 +16,7 @@ public:
     /*  Getter / Setter */
     virtual IConnection                 *getConnectionManager() const;
     virtual IMessenger                  *getMessengerManager() const;
-    virtual const std::list<client *>   &getClientsList() const
+    virtual const std::list<client *>   &getClientsList() const;
 
     /*  Connection management   */
     virtual int                         connection(const int domain = AF_INET, const int type = SOCK_STREAM,

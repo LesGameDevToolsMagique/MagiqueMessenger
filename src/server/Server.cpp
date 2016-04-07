@@ -44,7 +44,8 @@ const std::list<client *>                   &Server::getClientsList() const
  *  Connection management
  */
 
-int                                         Server::connection(const int domain, const int type, const std::string &protocol,
+int                                         Server::connection(const int domain, const int type,
+                                                               const std::string &protocol,
                                                                const unsigned int max_listener)
 {
     if (this->getConnectionManager()->connection(domain, type, protocol) == -1) {
