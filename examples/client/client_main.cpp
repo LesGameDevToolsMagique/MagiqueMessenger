@@ -2,7 +2,7 @@
 // Created by Jean-Antoine Dupont on 01/04/2016.
 //
 
-#include "../../src/client/Client.hpp"
+#include    "../../src/client/Client.hpp"
 
 int main()
 {
@@ -10,7 +10,7 @@ int main()
     std::string msg = "Hello world !";
 
     if (client->connection(AF_INET, SOCK_STREAM, "TCP") == 0) {
-        client->sendMessage(msg, msg.size());
+        client->sendMessage(msg.c_str(), msg.size());
 
         client->disconnection();
     }
