@@ -33,7 +33,11 @@ protected:
 
     /*  Socket management       */
     virtual int                         createSocket(const int domain, const int type , const int protocol);
-    virtual void                        destroySocket();
+    virtual int                         destroySocket(int fd);
+
+    virtual int                         bindSocket();
+    virtual int                         listenSocket(const int max_listened = 256);
+    virtual int                         acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size);
 
     /*  Configuration           */
     virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET);

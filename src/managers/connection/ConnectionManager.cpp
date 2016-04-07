@@ -93,7 +93,8 @@ int                         ConnectionManager::connection(const int domain, cons
 
 void                        ConnectionManager::disconnection()
 {
-    this->destroySocket();
+    this->destroySocket(this->getSocketFd());
+
     // TODO: Disconnected message
 }
 
@@ -112,18 +113,59 @@ int                         ConnectionManager::createSocket(const int domain, co
     }
 
     // TODO: Socket created message
+
     return 0;
 }
 
-void                        ConnectionManager::destroySocket()
+int                         ConnectionManager::destroySocket(int fd)
 {
-    if (this->socket_fd != SOCKET_FD_DEFAULT_VALUE) {
-        if (close(this->socket_fd) == -1) {
-            this->destroySocket();
-        }
-        this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
-        // TODO: Socket destroyed message
+    if (close(fd) == -1) {
+        // TODO: Socket destroyed error message
+        return -1;
     }
+
+    this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
+
+    // TODO: Socket destroyed message
+
+    return 0;
+}
+
+int                         ConnectionManager::bindSocket()
+{
+    if (bind(this->getSocketFd(), ((const struct sockaddr *)this->getMySockaddr()), sizeof(this->getMySockaddr())) == -1) {
+        // TODO: Socket binded error message
+        return -1;
+    }
+
+    // TODO: Socket binded message
+    return 0;
+}
+
+int                         ConnectionManager::listenSocket(const int max_listened)
+{
+    if (listen(this->getSocketFd(), max_listened) == -1) {
+        // TODO: Socket listen error message
+        return -1;
+    }
+
+    // TODO: Socked listened message
+
+    return 0;
+}
+
+int                         ConnectionManager::acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size)
+{
+    int client_fd = accept(this->getSocketFd(), client_addr, client_addr_size);
+
+    if (client_fd == -1) {
+        // TODO: Socket accept error message
+        return -1;
+    }
+
+    // TODO: Socket accept message
+
+    return client_fd;
 }
 
 int                         ConnectionManager::sockaddrConfig(struct sockaddr_in *sockaddr, const int domain)

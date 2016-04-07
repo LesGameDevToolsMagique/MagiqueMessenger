@@ -6,7 +6,8 @@
 #define     __ICONNECTION_HPP__
 
 #include    <string>        // std::string
-#include    <sys/socket.h>  // socket
+#include    <sys/types.h>   // socket - bind - listen - accept
+#include    <sys/socket.h>  // socket - bind - listen - accept
 #include    <netinet/in.h>  // sockaddr_in
 
 #define     SOCKET_FD_DEFAULT_VALUE     (-2)
@@ -37,7 +38,11 @@ public:
 protected:
     /*  Socket management       */
     virtual int                         createSocket(const int domain, const int type , const int protocol) = 0;
-    virtual void                        destroySocket() = 0;
+    virtual int                         destroySocket(int fd) = 0;
+
+    virtual int                         bindSocket() = 0;
+    virtual int                         listenSocket(const int max_listened = 256) = 0;
+    virtual int                         acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size) = 0;
 
     /*  Configuration           */
     virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET) = 0;
