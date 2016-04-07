@@ -26,6 +26,22 @@ set(MESSENGER_MANAGER_FILES ${MESSENGER_MANAGER_ROOT}/MessengerManager.cpp ${MES
 set(CLIENT_ROOT src/client)
 set(CLIENT_FILES ${CLIENT_ROOT}/Client.cpp ${CLIENT_ROOT}/Client.hpp)
 
+#
+# Server
+#
+set(SERVER_ROOT src/server)
+
+#
+# Examples
+#
+
+# Client
+set(CLIENT_EXAMPLE_ROOT examples/client)
+set(CLIENT_EXAMPLE_FILES ${CLIENT_FILES} ${CLIENT_EXAMPLE_ROOT}/client_main.cpp)
+#add_executable(Client ${CONNECTION_MANAGER_FILES} ${MESSENGER_MANAGER_FILES} ${CLIENT_EXAMPLE_FILES})
+
+# Server
+set(SERVER_EXAMPLE_ROOT examples/server)
 
 # Main
 set(SOURCE_FILES  ${INTERFACES_FILES} ${CONNECTION_MANAGER_FILES} ${MESSENGER_MANAGER_FILES} ${CLIENT_FILES} main.cpp)
