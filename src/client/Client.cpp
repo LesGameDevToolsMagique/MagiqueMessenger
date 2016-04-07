@@ -2,9 +2,9 @@
 // Created by Jean-Antoine Dupont on 01/04/2016.
 //
 
-#include "Client.hpp"
-#include "../managers/connection/ConnectionManager.hpp"
-#include "../managers/messenger/MessengerManager.hpp"
+#include    "Client.hpp"
+#include    "../managers/connection/ConnectionManager.hpp"
+#include    "../managers/messenger/MessengerManager.hpp"
 
 Client::Client(const std::string &ip_address, const unsigned int port)
 {
