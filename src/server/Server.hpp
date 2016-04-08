@@ -25,9 +25,9 @@ public:
     virtual void                        disconnection();
 
     /*  Message management  */
-    virtual int                         sendMessage(const void *message, const unsigned int msg_size,
-                                                    const int flags = 0,
-                                                    const sockaddr *to = nullptr);
+    virtual int                         sendMessage(const struct client *client,
+                                                    const void *message, const unsigned int msg_size,
+                                                    const int flags);
 
     virtual void                        *receiveMessage(const unsigned int read_size = 4096,
                                                         const int flags = 0,

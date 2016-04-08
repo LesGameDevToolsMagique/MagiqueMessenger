@@ -4,18 +4,20 @@
 
 #include    "ConnectionManager.hpp"
 
+#include    <iostream>
+
 ConnectionManager::ConnectionManager(const std::string &ip_address, const unsigned int port)
 {
     this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
     this->ip_address = ip_address;
     this->port = port;
-    // TODO: Object created message
+    std::cout << "[CONNECTION MANAGER]: Object created" << std::endl;
 }
 
 ConnectionManager::~ConnectionManager()
 {
-    this->disconnection();
-    // TODO: Object destroyed message
+    this->destroySocket(this->getSocketFd());
+    std::cout << "[CONNECTION MANAGER]: Object destroyed" << std::endl;
 }
 
 /*
@@ -52,7 +54,7 @@ int                         ConnectionManager::getProtocol(const std::string &pr
 
     if (!protocol.empty()) {
         if ((proto = getprotobyname(protocol.c_str())) == nullptr) {
-            // TODO: Error message
+            std::cout << "[CONNECTION MANAGER]: [ERROR]: Getprotobyname ~> " << strerror(errno) << std::endl;
             return -1;
         }
         return proto->p_proto;
@@ -62,10 +64,10 @@ int                         ConnectionManager::getProtocol(const std::string &pr
 }
 
 /*
- *  Connection / Disconnection
+ *  Socket management
  */
 
-int                         ConnectionManager::connection(const int domain, const int type, const std::string &protocol)
+int                         ConnectionManager::createSocket(const int domain, const int type, const std::string &protocol)
 {
     int                     proto = this->getProtocol(protocol);
 
@@ -73,46 +75,19 @@ int                         ConnectionManager::connection(const int domain, cons
         return -1;
     }
 
-    if (this->createSocket(domain, type, proto) == -1) {
-        return -1;
+    this->socket_fd = socket(domain, type, proto);
+
+    if (this->socket_fd == -1) {
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Socket ~> " << strerror(errno) << std::endl;
+        this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
+        return  -1;
     }
 
     if (this->sockaddrConfig(&this->my_addr, domain) == -1) {
         return -1;
     }
 
-    if (connect(this->socket_fd, ((struct sockaddr *) this->getMySockaddr()), sizeof(struct sockaddr)) == -1) {
-        // TODO: Error message
-        return -1;
-    }
-
-    // TODO: Connected message
-
-    return 0;
-}
-
-void                        ConnectionManager::disconnection()
-{
-    this->destroySocket(this->getSocketFd());
-
-    // TODO: Disconnected message
-}
-
-/*
- *  Socket management
- */
-
-int                         ConnectionManager::createSocket(const int domain, const int type, const int protocol)
-{
-    this->socket_fd = socket(domain, type, protocol);
-
-    if (this->socket_fd == -1) {
-        // TODO: Error message
-        this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
-        return  -1;
-    }
-
-    // TODO: Socket created message
+    std::cout << "[CONNECTION MANAGER]: Socket created" << std::endl;
 
     return 0;
 }
@@ -120,52 +95,83 @@ int                         ConnectionManager::createSocket(const int domain, co
 int                         ConnectionManager::destroySocket(int fd)
 {
     if (close(fd) == -1) {
-        // TODO: Socket destroyed error message
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Close ~> " << strerror(errno) << std::endl;
         return -1;
     }
 
     this->socket_fd = SOCKET_FD_DEFAULT_VALUE;
 
-    // TODO: Socket destroyed message
+    std::cout << "[CONNECTION MANAGER]: Socket destroyed" << std::endl;
+
+    return 0;
+}
+
+int                         ConnectionManager::connectSocket()
+{
+    if (this->getSocketFd() == SOCKET_FD_DEFAULT_VALUE) {
+        // TODO: Error message
+        return -1;
+    }
+
+    if (connect(this->getSocketFd(), (struct sockaddr *)this->getMySockaddr(), sizeof(struct sockaddr)) == -1) {
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Connect ~> " << strerror(errno) << std::endl;
+        return -1;
+    }
 
     return 0;
 }
 
 int                         ConnectionManager::bindSocket()
 {
-    if (bind(this->getSocketFd(), ((const struct sockaddr *)this->getMySockaddr()), sizeof(this->getMySockaddr())) == -1) {
-        // TODO: Socket binded error message
+    if (this->getSocketFd() == SOCKET_FD_DEFAULT_VALUE) {
         return -1;
     }
 
-    // TODO: Socket binded message
+    if (bind(this->getSocketFd(), ((struct sockaddr *)this->getMySockaddr()), sizeof(struct sockaddr)) < 0) {
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Bind ~> " << strerror(errno) << std::endl;
+        return -1;
+    }
+
+    std::cout << "[CONNECTION MANAGER]: Socket binded" << std::endl;
+
     return 0;
 }
 
 int                         ConnectionManager::listenSocket(const int max_listened)
 {
     if (listen(this->getSocketFd(), max_listened) == -1) {
-        // TODO: Socket listen error message
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Listen ~> " << strerror(errno) << std::endl;
         return -1;
     }
 
-    // TODO: Socked listened message
+    std::cout << "[CONNECTION MANAGER]: Socket listen on " << max_listened << std::endl;
 
     return 0;
 }
 
-int                         ConnectionManager::acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size)
+int                         ConnectionManager::acceptSocket(struct client *client)
 {
-    int client_fd = accept(this->getSocketFd(), client_addr, client_addr_size);
-
-    if (client_fd == -1) {
-        // TODO: Socket accept error message
+    if (client == nullptr) {
         return -1;
     }
 
-    // TODO: Socket accept message
+    if (client->is_used) {
+        return -1;
+    }
 
-    return client_fd;
+    int client_fd = accept(this->getSocketFd(), ((struct sockaddr *)&client->addr), &client->size);
+
+    if (client_fd == -1) {
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Accept ~> " << strerror(errno) << std::endl;
+        return -1;
+    }
+
+    client->fd = client_fd;
+    client->is_used = true;
+
+    std::cout << "[CONNECTION MANAGER]: New client accepted" << std::endl;
+
+    return 0;
 }
 
 int                         ConnectionManager::sockaddrConfig(struct sockaddr_in *sockaddr, const int domain)
@@ -173,15 +179,15 @@ int                         ConnectionManager::sockaddrConfig(struct sockaddr_in
     unsigned int            in_addr = inet_addr(this->getIpAddress().c_str());
 
     if (in_addr == 0) {
-        // TODO: Error message
+        std::cout << "[CONNECTION MANAGER]: [ERROR]: Inet_addr ~> " << strerror(errno) << std::endl;
         return -1;
     }
 
-    sockaddr->sin_family = ((sa_family_t) domain);
-    sockaddr->sin_port = htons(this->getPort());
-    sockaddr->sin_addr.s_addr = in_addr;
+    memset(sockaddr, 0, sizeof(sockaddr));
 
-    bzero(&(sockaddr->sin_zero), 0);
+    sockaddr->sin_family = ((sa_family_t)domain);
+    sockaddr->sin_addr.s_addr = in_addr;
+    sockaddr->sin_port = htons(this->getPort());
 
     // TODO: sockaddr configuration set
 

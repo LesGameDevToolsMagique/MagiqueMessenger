@@ -38,12 +38,20 @@ IMessenger      *Client::getMessengerManager() const
 
 int             Client::connection(const int domain, const int type, const std::string &protocol)
 {
-    return this->getConnectionManager()->connection(domain, type, protocol);
+    if (this->getConnectionManager()->createSocket(domain, type, protocol) != 0) {
+        return -1;
+    }
+
+    if (this->getConnectionManager()->connectSocket() != 0) {
+        return -1;
+    }
+
+    return 0;
 }
 
 void            Client::disconnection()
 {
-    this->getConnectionManager()->disconnection();
+    this->getConnectionManager()->destroySocket(this->getConnectionManager()->getSocketFd());
 }
 
 /*

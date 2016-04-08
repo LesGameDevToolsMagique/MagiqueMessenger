@@ -6,6 +6,8 @@
 #include    "../managers/connection/ConnectionManager.hpp"
 #include    "../managers/messenger/MessengerManager.hpp"
 
+#include <iostream>
+
 Server::Server(const std::string &ip_address, const unsigned int port)
 {
     this->connectionManager = new ConnectionManager(ip_address, port);
@@ -48,15 +50,15 @@ int                                         Server::connection(const int domain,
                                                                const std::string &protocol,
                                                                const unsigned int max_listener)
 {
-    if (this->getConnectionManager()->connection(domain, type, protocol) == -1) {
+    if (this->getConnectionManager()->createSocket(domain, type, protocol) != 0) {
         return -1;
     }
 
-    if (this->getConnectionManager()->bindSocket() == -1) {
+    if (this->getConnectionManager()->bindSocket() != 0) {
         return -1;
     }
 
-    if (this->getConnectionManager()->listenSocket(max_listener) == -1) {
+    if (this->getConnectionManager()->listenSocket(max_listener) != 0) {
         return -1;
     }
 
@@ -72,17 +74,21 @@ int                                         Server::connection(const int domain,
 
 void                                            Server::disconnection()
 {
-    this->getConnectionManager()->disconnection();
 }
 
 /*
  *  Messenger management
  */
 
-int                                             Server::sendMessage(const void *message, const unsigned int msg_size,
-                                    const int flags, const sockaddr *to)
+int                                             Server::sendMessage(const struct client *client,
+                                                                    const void *message, const unsigned int msg_size,
+                                                                    const int flags)
 {
-    return this->getMessengerManager()->sendMessage(this->getConnectionManager()->getSocketFd(), message, msg_size, flags, to);
+    if (client == nullptr) {
+        return -1;
+    }
+
+    return this->getMessengerManager()->sendMessage(client->fd, message, msg_size, flags, ((struct sockaddr *)&client->addr));
 }
 
 void                                            *Server::receiveMessage(const unsigned int read_size,
@@ -103,12 +109,11 @@ void                                            Server::clearClientsList()
     for (it = this->getClientsList().begin() ; it != this->getClientsList().end() ; it++) {
         client = *it;
 
-        this->getConnectionManager()->destroySocket(client->fd);
+        // this->getConnectionManager()->destroySocket(client->fd);
 
         delete client;
 
         this->clients.erase(it);
 
-        client = nullptr;
     }
 }

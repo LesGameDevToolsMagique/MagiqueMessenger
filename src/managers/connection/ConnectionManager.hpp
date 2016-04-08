@@ -23,21 +23,18 @@ public:
     virtual unsigned int                getPort() const;
     virtual const struct sockaddr_in    *getMySockaddr() const;
 
-    /*  Connection management   */
-    virtual int                         connection(const int domain = AF_INET, const int type = SOCK_STREAM, const std::string &protocol = std::string());
-    virtual void                        disconnection();
+    /*  Socket management       */
+    virtual int                         createSocket(const int domain, const int type , const std::string &protocol = "");
+    virtual int                         destroySocket(int fd);
+
+    virtual int                         connectSocket();
+    virtual int                         bindSocket();
+    virtual int                         listenSocket(const int max_listened = 256);
+    virtual int                         acceptSocket(struct client *client);
 
 protected:
     /*  Getter / Setter         */
     int                                 getProtocol(const std::string &protocol) const;
-
-    /*  Socket management       */
-    virtual int                         createSocket(const int domain, const int type , const int protocol);
-    virtual int                         destroySocket(int fd);
-
-    virtual int                         bindSocket();
-    virtual int                         listenSocket(const int max_listened = 256);
-    virtual int                         acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size);
 
     /*  Configuration           */
     virtual int                         sockaddrConfig(struct sockaddr_in *sockaddr, const int domain = AF_INET);

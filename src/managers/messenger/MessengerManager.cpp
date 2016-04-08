@@ -46,15 +46,18 @@ void        *MessengerManager::receiveMessage(const int sockfd,
                                               struct sockaddr *to, socklen_t *to_size)
 {
     void    *msg_rcvd = nullptr;
+    int     msg_size = 0;
 
     msg_rcvd = operator new(read_size);
 
-    if (recvfrom(sockfd, msg_rcvd, (read_size - 1), flags, to, (to == nullptr ? nullptr : to_size)) == -1) {
+    msg_size = ((int)recvfrom(sockfd, msg_rcvd, (read_size - 1), flags, to, (to == nullptr ? nullptr : to_size)));
+
+    if (msg_size == -1) {
         // TODO: Error message
         return nullptr;
     }
 
-    ((char *)msg_rcvd)[read_size] = 0;
+    ((char *)msg_rcvd)[msg_size] = 0;
 
     // TODO: Message received
 

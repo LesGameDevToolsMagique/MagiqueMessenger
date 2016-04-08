@@ -9,14 +9,6 @@
 #include    "IMessenger.hpp"
 #include    <list>
 
-struct              client
-{
-    int             fd;
-    sockaddr_in     addr;
-    socklen_t       size;
-    bool            is_used;
-};
-
 class                                   IServer
 {
 protected:
@@ -39,9 +31,9 @@ public:
     virtual void                        disconnection() = 0;
 
     /*  Message management  */
-    virtual int                         sendMessage(const void *message, const unsigned int msg_size,
-                                                    const int flags = 0,
-                                                    const sockaddr *to = nullptr) = 0;
+    virtual int                         sendMessage(const struct client *client,
+                                                    const void *message, const unsigned int msg_size,
+                                                    const int flags) = 0;
 
     virtual void                        *receiveMessage(const unsigned int read_size = 4096,
                                                         const int flags = 0,

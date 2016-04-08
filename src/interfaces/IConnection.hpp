@@ -12,6 +12,14 @@
 
 #define     SOCKET_FD_DEFAULT_VALUE     (-2)
 
+struct              client
+{
+    int             fd;
+    sockaddr_in     addr;
+    socklen_t       size;
+    bool            is_used;
+};
+
 class                                   IConnection
 {
 protected:
@@ -30,18 +38,14 @@ public:
     virtual unsigned int                getPort() const = 0;
     virtual const struct sockaddr_in    *getMySockaddr() const = 0;
 
-    /*  Connection management   */
-    virtual int                         connection(const int domain = AF_INET, const int type = SOCK_STREAM,
-                                                   const std::string &protocol = std::string()) = 0;
-    virtual void                        disconnection() = 0;
-
     /*  Socket management       */
-    virtual int                         createSocket(const int domain, const int type , const int protocol) = 0;
+    virtual int                         createSocket(const int domain, const int type , const std::string &protocol = "") = 0;
     virtual int                         destroySocket(int fd) = 0;
 
+    virtual int                         connectSocket() = 0;
     virtual int                         bindSocket() = 0;
     virtual int                         listenSocket(const int max_listened = 256) = 0;
-    virtual int                         acceptSocket(struct sockaddr *client_addr, socklen_t *client_addr_size) = 0;
+    virtual int                         acceptSocket(struct client *client) = 0;
 
 protected:
     /*  Configuration           */
